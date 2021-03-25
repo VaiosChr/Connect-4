@@ -13,9 +13,10 @@ int move(Board board, Player player);
 
 int main()
 {
+    //Change this to false if there is going to be a player 2
+    bool player_2_is_ai = true;
     bool winner = false;
-    Player player1(1, "O"), player2(2, "X");
-//    Player player2(2, "X");
+    Player player1(1, "O"), player2(2, "X", player_2_is_ai);
     Board board(rows, columns);
     board.print();
     
@@ -25,14 +26,14 @@ int main()
     {
         cout << "TURN: " << turn << endl;
         //player 1
-        if(board.play(player1, move(board, player1)))
+        if(board.play(player1))
         {
             cout << "Player 1 is the winner!" << endl;
             winner = true;
             break;
         }
         //player 2
-        if(board.play(player2, move(board, player2)))
+        if(board.play(player2))
         {
             cout << "Player 2 is the winner!" << endl;
             winner = true;
@@ -45,18 +46,3 @@ int main()
     return 0;
 }
 
-int move(Board board, Player player)
-{
-    int col;
-    
-    cout << "It's player " << player.get_id() << "'s turn." << ")" << endl;
-    cout << "Enter your move: ";
-    cin >> col;
-    while(col < 1 || col > columns + 1 || !(board.get_char(0, col - 1) == " "))
-    {
-        cout << "This is an invalid move. Try again: ";
-        cin >> col;
-    }
-    
-    return --col;
-}

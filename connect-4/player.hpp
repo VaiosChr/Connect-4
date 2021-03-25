@@ -10,12 +10,14 @@ class Player
 private:
     int id;
     string name;
+    bool is_ai{false};
     
 public:
-    Player(int id, string name)
+    Player(int id, string name, bool is_ai = false)
     {
         this->id = id;
         this->name = name;
+        this->is_ai = is_ai;
     }
     
     int get_id()
@@ -26,6 +28,20 @@ public:
     string get_name()
     {
         return name;
+    }
+    
+    bool get_is_ai()
+    {
+        return is_ai;
+    }
+    
+    int move()
+    {
+        int col;
+
+        cin >> col;
+        
+        return col - 1;
     }
 };
 

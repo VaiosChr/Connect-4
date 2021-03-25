@@ -25,8 +25,24 @@ void Board::print()
     cout << endl;
 }
 
-bool Board::play(Player player, int col)
+bool Board::play(Player player)
 {
+    int col = 0;
+    if(player.get_is_ai()) col = ai_play(player);
+    else
+    {
+        cout << "It's Player " << player.get_id() << "'s turn." << endl;
+        cout << "Enter your move: ";
+        
+        int col = player.move();
+        
+        while(col < 0 || col > columns || !(this->get_char(0, col) == " "))
+        {
+            cout << "This is an invalid move. Try again: ";
+            col = player.move();
+        }
+    }
+    
     for(int i = rows - 1; i >= 0; i--)
     {
         if(board[i][col] == " ")
@@ -58,6 +74,7 @@ bool Board::wins(Player player)
             else counter = 0;
         }
     }
+    
     //horizontal
     for(int i = 0; i < rows; i++)
     {
@@ -72,6 +89,7 @@ bool Board::wins(Player player)
             else counter = 0;
         }
     }
+    
     //positive diagonal
     for(int i = rows - 1; i >= 0; i--)
     {
@@ -90,6 +108,7 @@ bool Board::wins(Player player)
             }
         }
     }
+    
     //negative diagonal
     for(int i = 0; i < rows; i++)
     {
@@ -124,4 +143,11 @@ bool Board::is_full()
     }
     
     return true;
+}
+
+bool Board::ai_play(Player player)
+{
+    //TODO: IMPLEMENT THE A.I. PART OF THE ALGORITHM
+    
+    return wins(player);
 }
