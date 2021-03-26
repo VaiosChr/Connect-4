@@ -53,12 +53,16 @@ bool Board::play(Player player)
     }
     print();
     
-    return wins(player);
+    return wins(player.get_id());
 }
 
-bool Board::wins(Player player)
+bool Board::wins(int id)
 {
     int counter;
+    string character;
+    
+    if(id == 2) character = "X";
+    else character = "O";
     
     //vertical
     for(int j = 0; j < columns; j++)
@@ -66,7 +70,7 @@ bool Board::wins(Player player)
         counter = 0;
         for(int i = 0; i < rows; i++)
         {
-            if(board[i][j] == player.get_name())
+            if(board[i][j] == character)
             {
                 counter++;
                 if(counter >= 4) return true;
@@ -81,7 +85,7 @@ bool Board::wins(Player player)
         counter = 0;
         for(int j = 0; j < columns; j++)
         {
-            if(board[i][j] == player.get_name())
+            if(board[i][j] == character)
             {
                 counter++;
                 if(counter >= 4) return true;
@@ -99,7 +103,7 @@ bool Board::wins(Player player)
             counter = 0;
             for(int k = 0; k < i && k < columns - j; k++)
             {
-                if(board[i - k][j + k] == player.get_name())
+                if(board[i - k][j + k] == character)
                 {
                     counter++;
                     if(counter >= 4) return true;
@@ -118,7 +122,7 @@ bool Board::wins(Player player)
             counter = 0;
             for(int k = 0; k < rows - i && k < columns - j; k++)
             {
-                if(board[i + k][j + k] == player.get_name())
+                if(board[i + k][j + k] == character)
                 {
                     counter++;
                     if(counter >= 4) return true;
@@ -147,7 +151,232 @@ bool Board::is_full()
 
 bool Board::ai_play(Player player)
 {
-    //TODO: IMPLEMENT THE A.I. PART OF THE ALGORITHM
+    //TODO: IMPLEMENT HERE THE A.I. PART OF THE ALGORITHM
     
-    return wins(player);
+    vector<vector<int>> board_2;
+    
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            if(board[i][j] == "X") board_2[i][j] = 1;
+            else if(board[i][j] == "O") board_2[i][j] = 2;
+            else board_2[i][j] = 0;
+        }
+    }
+    
+    minmax(player, board_2, 5, true);
+    
+    return wins(player.get_id());
+}
+
+float Board::minmax(Player player, vector<vector<int>> check_board, int depth, bool is_max)
+{
+    if(depth == 0 || wins(1)) return evaluation(check_board);
+    
+    if(is_max)
+    {
+        float max_eval = - INFINITY;
+        
+        for(int j = 0; j < columns; j++)
+        {
+            if(check_board[0][j] != 0) continue;
+            for(int i = rows - 1; i >= 0; i--)
+            {
+                if(check_board[i][j] == 0)
+                {
+                    check_board[i][j] = 1;
+                    
+                    float eval = minmax(player, check_board, depth - 1, false);
+                    
+                    max_eval = max(max_eval, eval);
+                }
+            }
+        }
+        
+        return max_eval;
+    }
+    
+    else
+    {
+        float min_eval = INFINITY;
+        
+        for(int j = 0; j < columns; j++)
+        {
+            if(check_board[0][j] != 0) continue;
+            for(int i = rows - 1; i >= 0; i--)
+            {
+                if(check_board[i][j] == 0)
+                {
+                    check_board[i][j] = 2;
+                    
+                    float eval = minmax(player, check_board, depth - 1, true);
+                    
+                    min_eval = min(min_eval, eval);
+                }
+            }
+        }
+        
+        return min_eval;
+    }
+}
+
+float Board::evaluation(vector<vector<int>> array)
+{
+    int counter = 0, no_co = 0, rating = 0;
+    
+    if(wins(2)) return INFINITY;
+    else if(wins(1)) return - INFINITY;
+    
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < columns; j++)
+        {
+            //for ai
+            if(array[i][j] == 2)
+            {
+                //vertical
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i - k][j] == 1) break;
+                    else counter++;
+                    if(array[i - k][j] == 2) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                }
+                //horizontal - right
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i][j + k] == 1) break;
+                    else counter++;
+                    if(array[i][j + k] == 2) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //horitzontal - left
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i][j - k] == 1) break;
+                    else counter++;
+                    if(array[i][j - k] == 2) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //negative diagonal - right
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i + k][j + k] == 1) break;
+                    else counter++;
+                    if(array[i + k][j + k] == 2) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //negative diagonal - left
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i - k][j - k] == 1) break;
+                    else counter++;
+                    if(array[i - k][j - k] == 2) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+            }
+            //for player
+            if(array[i][j] == 1)
+            {
+                //vertical
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i - k][j] == 2) break;
+                    else counter++;
+                    if(array[i - k][j] == 1) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                }
+                //horizontal - right
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i][j + k] == 2) break;
+                    else counter++;
+                    if(array[i][j + k] == 1) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //horitzontal - left
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i][j - k] == 2) break;
+                    else counter++;
+                    if(array[i][j - k] == 1) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //negative diagonal - right
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i + k][j + k] == 2) break;
+                    else counter++;
+                    if(array[i + k][j + k] == 1) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+                //negative diagonal - left
+                counter = 0;
+                no_co = 0;
+                for(int k = 1; k < 4; k++)
+                {
+                    if(array[i - k][j - k] == 2) break;
+                    else counter++;
+                    if(array[i - k][j - k] == 1) no_co++;
+                }
+                if(counter >= 4)
+                {
+                    if(no_co > 0) rating += pow(2, no_co + 1);
+                    else rating += 2;
+                }
+            }
+            
+        }
+    }
+    
+    return rating;
 }
