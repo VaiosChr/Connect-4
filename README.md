@@ -6,4 +6,4 @@ Connect Four (also known as Four Up, Plot Four, Find Four, Captain's Mistress, F
 
 (source: [Wikipedia](https://en.wikipedia.org/wiki/Connect_Four))
 
-The board sizes are adjustable, i.e. 10x10, 20x18 etc. Also, the 2nd player can be switched to an A.I. that makes the moves automatically, by using the min-max algorithm, with alpha-beta pruning. The player can choose the suitable min-max searching depth, to adjust the difficulty of the game.
+The board sizes are adjustable, i.e. 10x10, 20x18 etc. Also, the 2nd player can be switched to an A.I. that makes the moves automatically, utilizing the min-max algorithm, with alpha-beta pruning. The player can choose the suitable min-max searching depth, to adjust the difficulty of the game.
