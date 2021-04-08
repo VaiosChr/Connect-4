@@ -151,9 +151,7 @@ bool Board::is_full()
 
 bool Board::ai_play(Player player)
 {
-    //TODO: IMPLEMENT HERE THE A.I. PART OF THE ALGORITHM
-    
-    vector<vector<int>> board_2;
+    vector<vector<int>> board_2(rows, vector<int>(columns, 0));
     
     for(int i = 0; i < rows; i++)
     {
@@ -161,11 +159,10 @@ bool Board::ai_play(Player player)
         {
             if(board[i][j] == "X") board_2[i][j] = 1;
             else if(board[i][j] == "O") board_2[i][j] = 2;
-            else board_2[i][j] = 0;
         }
     }
     
-    minmax(player, board_2, 5, true);
+    minmax(player, board_2, 3, true);
     
     return wins(player.get_id());
 }
@@ -238,9 +235,12 @@ float Board::evaluation(vector<vector<int>> array)
                 //vertical
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i - k][j] == 1) break;
-                    else counter++;
-                    if(array[i - k][j] == 2) no_co++;
+                    if(i - k >= 0)
+                    {
+                        if(array[i - k][j] == 1) break;
+                        else counter++;
+                        if(array[i - k][j] == 2) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -251,9 +251,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i][j + k] == 1) break;
-                    else counter++;
-                    if(array[i][j + k] == 2) no_co++;
+                    if(j + k < columns)
+                    {
+                        if(array[i][j + k] == 1) break;
+                        else counter++;
+                        if(array[i][j + k] == 2) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -265,9 +268,13 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i][j - k] == 1) break;
-                    else counter++;
-                    if(array[i][j - k] == 2) no_co++;
+                    if(j - k >= 0)
+                    {
+                        if(array[i][j - k] == 1) break;
+                        else counter++;
+                        if(array[i][j - k] == 2) no_co++;
+                    }
+                    
                 }
                 if(counter >= 4)
                 {
@@ -279,9 +286,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i + k][j + k] == 1) break;
-                    else counter++;
-                    if(array[i + k][j + k] == 2) no_co++;
+                    if(i + k < rows && j + k < columns)
+                    {
+                        if(array[i + k][j + k] == 1) break;
+                        else counter++;
+                        if(array[i + k][j + k] == 2) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -293,9 +303,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
+                    if(i - k >= 0 && j - k >= 0)
+                    {
                     if(array[i - k][j - k] == 1) break;
                     else counter++;
                     if(array[i - k][j - k] == 2) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -309,9 +322,12 @@ float Board::evaluation(vector<vector<int>> array)
                 //vertical
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i - k][j] == 2) break;
-                    else counter++;
-                    if(array[i - k][j] == 1) no_co++;
+                    if(i - k >= 0)
+                    {
+                        if(array[i - k][j] == 2) break;
+                        else counter++;
+                        if(array[i - k][j] == 1) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -322,9 +338,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i][j + k] == 2) break;
-                    else counter++;
-                    if(array[i][j + k] == 1) no_co++;
+                    if(j + k < columns)
+                    {
+                        if(array[i][j + k] == 2) break;
+                        else counter++;
+                        if(array[i][j + k] == 1) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -336,9 +355,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i][j - k] == 2) break;
-                    else counter++;
-                    if(array[i][j - k] == 1) no_co++;
+                    if(j - k >= 0)
+                    {
+                        if(array[i][j - k] == 2) break;
+                        else counter++;
+                        if(array[i][j - k] == 1) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -350,9 +372,12 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i + k][j + k] == 2) break;
-                    else counter++;
-                    if(array[i + k][j + k] == 1) no_co++;
+                    if(i + k < rows && j + k < columns)
+                    {
+                        if(array[i + k][j + k] == 2) break;
+                        else counter++;
+                        if(array[i + k][j + k] == 1) no_co++;
+                    }
                 }
                 if(counter >= 4)
                 {
@@ -364,9 +389,13 @@ float Board::evaluation(vector<vector<int>> array)
                 no_co = 0;
                 for(int k = 1; k < 4; k++)
                 {
-                    if(array[i - k][j - k] == 2) break;
-                    else counter++;
-                    if(array[i - k][j - k] == 1) no_co++;
+                    if(i - k >= 0 && j - k >= 0)
+                    {
+                        if(array[i - k][j - k] == 2) break;
+                        else counter++;
+                        if(array[i - k][j - k] == 1) no_co++;
+                    }
+                    
                 }
                 if(counter >= 4)
                 {
